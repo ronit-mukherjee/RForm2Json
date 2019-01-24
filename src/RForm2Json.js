@@ -12,6 +12,8 @@
                 "keySelector": "name",
                 "valueSelectorType": "value",
                 "valueSelector": "value",
+                "keys": [],
+                "exclude": []
             };
 
             const _addNewSelector = () => {
@@ -135,6 +137,13 @@
 
                     const json = {};
 
+                    function _setProperty(key, value) {
+                        if (value || value == "") {
+                            if ((!json.hasOwnProperty(key)) || (json.hasOwnProperty(key) && json[key] === "" && value !== "")) {
+                                json[key] = value;
+                            }
+                        }
+                    }
 
                     if (_selectedElementRef) {
                         const fields = _getInputElements(_selectedElementRef);
@@ -147,9 +156,23 @@
                             if (key) {
                                 const value = _getValueForJson(field, options);
 
-                                if (value || value == "") {
-                                    if ((!json.hasOwnProperty(key)) || (json.hasOwnProperty(key) && json[key] === "" && value !== "")) {
-                                        json[key] = value;
+                                if (options.keys.length > 0) {
+                                    if (options.keys.indexOf(key) >= 0) {
+                                        if (options.exclude.length > 0) {
+                                            if (options.exclude.indexOf(key) < 0) {
+                                                _setProperty(key, value);
+                                            }
+                                        } else {
+                                            _setProperty(key, value);
+                                        }
+                                    }
+                                } else {
+                                    if (options.exclude.length > 0) {
+                                        if (options.exclude.indexOf(key) < 0) {
+                                            _setProperty(key, value);
+                                        }
+                                    } else {
+                                        _setProperty(key, value);
                                     }
                                 }
                             }

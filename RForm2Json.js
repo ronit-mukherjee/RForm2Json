@@ -30,7 +30,9 @@ var _extends =
         keySelectorType: "attribute",
         keySelector: "name",
         valueSelectorType: "value",
-        valueSelector: "value"
+        valueSelector: "value",
+        keys: [],
+        exclude: []
       };
 
       var _addNewSelector = function _addNewSelector() {
@@ -182,6 +184,17 @@ var _extends =
             : {};
 
         try {
+          var _setProperty = function _setProperty(key, value) {
+            if (value || value == "") {
+              if (
+                !json.hasOwnProperty(key) ||
+                (json.hasOwnProperty(key) && json[key] === "" && value !== "")
+              ) {
+                json[key] = value;
+              }
+            }
+          };
+
           options = _extends({}, _options, options);
 
           var json = {};
@@ -197,14 +210,23 @@ var _extends =
               if (key) {
                 var value = _getValueForJson(field, options);
 
-                if (value || value == "") {
-                  if (
-                    !json.hasOwnProperty(key) ||
-                    (json.hasOwnProperty(key) &&
-                      json[key] === "" &&
-                      value !== "")
-                  ) {
-                    json[key] = value;
+                if (options.keys.length > 0) {
+                  if (options.keys.indexOf(key) >= 0) {
+                    if (options.exclude.length > 0) {
+                      if (options.exclude.indexOf(key) < 0) {
+                        _setProperty(key, value);
+                      }
+                    } else {
+                      _setProperty(key, value);
+                    }
+                  }
+                } else {
+                  if (options.exclude.length > 0) {
+                    if (options.exclude.indexOf(key) < 0) {
+                      _setProperty(key, value);
+                    }
+                  } else {
+                    _setProperty(key, value);
                   }
                 }
               }
