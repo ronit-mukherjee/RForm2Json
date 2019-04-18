@@ -1,31 +1,22 @@
+
 "use strict";
 
-var _extends =
-  Object.assign ||
-  function(target) {
-    for (var i = 1; i < arguments.length; i++) {
-      var source = arguments[i];
-      for (var key in source) {
-        if (Object.prototype.hasOwnProperty.call(source, key)) {
-          target[key] = source[key];
-        }
-      }
-    }
-    return target;
-  };
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
 
-(function(env, doc) {
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+function _instanceof(left, right) { if (right != null && typeof Symbol !== "undefined" && right[Symbol.hasInstance]) { return right[Symbol.hasInstance](left); } else { return left instanceof right; } }
+
+(function (env, doc) {
   var _selectorsArr = [];
   var _selectedElementsRefArr = [];
 
   function RForm2Json() {
-    var selector =
-      arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+    var selector = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
 
     if (selector != null) {
       this.selector = selector;
       var rftj = this;
-
       var _options = {
         keySelectorType: "attribute",
         keySelector: "name",
@@ -41,6 +32,7 @@ var _extends =
 
           if (selectedElemRef) {
             _selectorsArr.push(selector);
+
             _selectedElementsRefArr.push(selectedElemRef);
 
             return _selectedElementsRefArr[_selectedElementsRefArr.length - 1];
@@ -53,10 +45,7 @@ var _extends =
       };
 
       var _getSelectedElementRef = function _getSelectedElementRef() {
-        var selector =
-          arguments.length > 0 && arguments[0] !== undefined
-            ? arguments[0]
-            : "";
+        var selector = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : "";
 
         try {
           //First search for same select element
@@ -78,7 +67,6 @@ var _extends =
 
                 //Look for selected element ref but with different selector
                 var selectedElemRef = doc.querySelector(selector);
-
                 i = _selectedElementsRefArr.findIndex(_matchDom);
 
                 if (i >= 0) {
@@ -99,15 +87,12 @@ var _extends =
       };
 
       var _getInputElements = function _getInputElements() {
-        var sf =
-          arguments.length > 0 && arguments[0] !== undefined
-            ? arguments[0]
-            : null;
+        var sf = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
 
         try {
           var elems = [];
 
-          if (sf !== null && sf instanceof HTMLElement) {
+          if (sf !== null && _instanceof(sf, HTMLElement)) {
             elems = sf.querySelectorAll("input,select,textarea");
           }
 
@@ -118,38 +103,44 @@ var _extends =
       };
 
       var _getKeyForJson = function _getKeyForJson() {
-        var field =
-          arguments.length > 0 && arguments[0] !== undefined
-            ? arguments[0]
-            : null;
-        var options =
-          arguments.length > 1 && arguments[1] !== undefined
-            ? arguments[1]
-            : {};
+        var field = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+        var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
         if (field != null) {
           switch (options.keySelectorType) {
             case "name":
               return field.getAttribute("name");
               break;
+
             case "attribute":
               return field.getAttribute(options.keySelector);
               break;
+
             default:
               return false;
           }
         }
       };
 
+      var _getMultiSelectValues = function _getMultiSelectValues(select) {
+        var result = [];
+        var options = select && select.options;
+        var opt;
+
+        for (var i = 0, iLen = options.length; i < iLen; i++) {
+          opt = options[i];
+
+          if (opt.selected) {
+            result.push(opt.value || opt.text);
+          }
+        }
+
+        return result;
+      };
+
       var _getValueForJson = function _getValueForJson() {
-        var field =
-          arguments.length > 0 && arguments[0] !== undefined
-            ? arguments[0]
-            : null;
-        var options =
-          arguments.length > 1 && arguments[1] !== undefined
-            ? arguments[1]
-            : {};
+        var field = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+        var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
         if (field != null) {
           switch (options.valueSelectorType) {
@@ -160,43 +151,39 @@ var _extends =
                 } else {
                   return "";
                 }
+              } else if (field.type === "select-multiple") {
+                return _getMultiSelectValues(field);
               } else {
                 return field.value;
               }
+
               break;
+
             case "attribute":
               return field.getAttribute(options.valueSelector);
               break;
+
             default:
               return false;
           }
         }
       };
 
-      var _selectedElementRef = (rftj.selectedElemRef = _getSelectedElementRef(
-        selector
-      ));
+      var _selectedElementRef = rftj.selectedElemRef = _getSelectedElementRef(selector);
 
-      this.getJSON = function() {
-        var options =
-          arguments.length > 0 && arguments[0] !== undefined
-            ? arguments[0]
-            : {};
+      this.getJSON = function () {
+        var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
         try {
           var _setProperty = function _setProperty(key, value) {
             if (value || value == "") {
-              if (
-                !json.hasOwnProperty(key) ||
-                (json.hasOwnProperty(key) && json[key] === "" && value !== "")
-              ) {
+              if (!json.hasOwnProperty(key) || json.hasOwnProperty(key) && json[key] === "" && value !== "") {
                 json[key] = value;
               }
             }
           };
 
-          options = _extends({}, _options, options);
-
+          options = _objectSpread({}, _options, options);
           var json = {};
 
           if (_selectedElementRef) {
@@ -247,8 +234,8 @@ var _extends =
     } catch (e) {
       console.error(e);
     }
-  };
+  }; //Make it available globally
 
-  //Make it available globally
+
   window.RForm2Json = window.F2J = init;
 })(window, document);
